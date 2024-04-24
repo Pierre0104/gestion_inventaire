@@ -23,11 +23,9 @@ class Order extends Model
     }
 
     // Relation avec Product à travers la table de jointure order_product (si un modèle Product existe)
-    public function products()
+  public function products()
     {
-        return $this->belongsToMany(Product::class, 'order_product')
-                    ->withPivot('quantity', 'price')
-                    ->withTimestamps(); // seulement si vous avez des timestamps dans la table de jointure
+        return $this->belongsToMany(Product::class)->withPivot('quantity', 'price');
     }
 
     // Vous pouvez également ajouter d'autres méthodes et logiques nécessaires à votre modèle ici.

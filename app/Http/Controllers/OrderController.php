@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
-    {
-        // Retourne toutes les commandes
-        return response()->json(Order::all());
-    }
+   public function index()
+{
+    // Get orders with pagination
+    $orders = Order::paginate(5); // Change 10 to however many items you want per page
+
+    return response()->json($orders);
+}
 
     public function store(Request $request)
     {

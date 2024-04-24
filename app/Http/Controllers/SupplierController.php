@@ -4,85 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
 
 class SupplierController extends Controller
 {
-    public function index()
-    {
-        try {
-            $suppliers = Supplier::all();
-            return response()->json($suppliers);
-        } catch (\Exception $e) {
-            Log::error('Error fetching suppliers: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to retrieve suppliers'], 500);
-        }
-    }
-
+    // Create a new Supplier
     public function store(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'contact_name' => 'nullable|string|max:255',
-                'email' => 'required|email|unique:suppliers',
-                'phone' => 'nullable|string',
-                'address' => 'nullable|string'
-            ]);
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'contact_name' => 'nullable|string',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string',
+            'address' => 'nullable|string'
+        ]);
 
-            $supplier = Supplier::create($validated);
-            return response()->json($supplier, 201);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Error creating supplier: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to create supplier'], 500);
-        }
+        $supplier = Supplier::create($validated);
+        return response()->json($supplier);
     }
 
-    public function show(Supplier $supplier)
+    // Retrieve a specific supplier
+    public function show($id)
     {
-        try {
-            return response()->json($supplier);
-        } catch (ModelNotFoundException $e) {
-            Log::error('Error finding supplier: ' . $e->getMessage());
-            return response()->json(['message' => 'Supplier not found'], 404);
-        } catch (\Exception $e) {
-            Log::error('Error displaying supplier: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to display supplier'], 500);
-        }
+        $supplier = Supplier::with('products')->findOrFail($id);
+        return response()->json($supplier);
     }
 
-    public function update(Request $request, Supplier $supplier)
+    // Update an existing supplier
+    public function update(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'contact_name' => 'nullable|string|max:255',
-                'email' => 'required|email|unique:suppliers,email,' . $supplier->id,
-                'phone' => 'nullable|string',
-                'address' => 'nullable|string'
-            ]);
+        $supplier = Supplier::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'string',
+            'contact_name' => 'string',
+            'email' => 'email',
+            'phone' => 'string',
+            'address' => 'string'
+        ]);
 
-            $supplier->update($validated);
-            return response()->json($supplier);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            Log::error('Error updating supplier: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to update supplier'], 500);
-        }
+        $supplier->update($validated);
+        return response()->json($supplier);
     }
 
-    public function destroy(Supplier $supplier)
+    // Delete a supplier
+    public function destroy($id)
     {
-        try {
-            $supplier->delete();
-            return response()->json(['message' => 'Supplier deleted successfully']);
-        } catch (\Exception $e) {
-            Log::error('Error deleting supplier: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to delete supplier'], 500);
-        }
+        $supplier = Supplier::findOrFail($id);
+        $supplier->delete();
+        return response()->json(['message' => 'Supplier deleted successfully.']);
     }
 }

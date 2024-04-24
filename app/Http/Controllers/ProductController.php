@@ -9,11 +9,14 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $products = Product::all();
-        return response()->json($products);
-    }
+   // In your ProductController
+public function index()
+{
+    // Fetch products with their supplier information
+    $products = Product::with('supplier')->paginate(10); // Assuming pagination
+    return response()->json($products);
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -52,17 +55,11 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-  public function show($id) // Enlever le typage "string" car les IDs sont généralement numériques
-{
-    $product = Product::find($id);
-
-    if (!$product) {
-        return response()->json(['message' => 'Product not found'], 404);
-    }
-
-    return response()->json($product);
-}
-    /**
+    public function show($id)
+    {
+        $product = Product::with(['supplier', 'orders'])->findOrFail($id);
+        return response()->json($product);
+    }/**
      * Show the form for editing the specified resource.
      */
   public function edit($id)

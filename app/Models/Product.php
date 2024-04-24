@@ -40,5 +40,12 @@ class Product extends Model
         return $this->belongsTo(Supplier::class); // Assurez-vous d'avoir un modèle Supplier défini.
     }
 
+// Adding to the existing Product model
+public function orders()
+{
+    return $this->belongsToMany(Order::class)->withPivot('quantity', 'price');
+}
+
+
     // Si vous avez d'autres relations ou des fonctionnalités spécifiques, ajoutez-les ici.
 }
