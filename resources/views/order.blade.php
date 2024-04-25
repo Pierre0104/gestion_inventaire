@@ -34,6 +34,19 @@
             {{ $orders->links() }}
         </div>
 
+<!-- inventory.blade.php -->
+<!-- inventory.blade.php -->
+<div class="text-center mb-4 space-x-2">
+    <a href="{{ url('inventory/suppliers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
+        Gérer les Fournisseurs
+    </a>
+    <a href="{{ url('inventory/') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les Produits
+    </a>
+</div>
+
+
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             fetchOrders();  // Charge les commandes dès que la page est chargée

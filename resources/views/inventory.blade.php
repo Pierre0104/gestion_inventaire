@@ -113,14 +113,17 @@
 </div>
 
 <!-- inventory.blade.php -->
-<div class="text-right mb-4">
-    <a href="{{ url('inventory/order') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Gérer les Commandes
-    </a>
-    <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Gérer les Clients
-    </a>
-</div>
+ <div class="text-right mb-4 space-x-2">
+        <a href="{{ url('inventory/order') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Gérer les Commandes
+        </a>
+        <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Gérer les Clients
+        </a>
+        <a href="{{ url('inventory/suppliers') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+            Gérer les Fournisseurs
+        </a>
+    </div>
 
 
 
