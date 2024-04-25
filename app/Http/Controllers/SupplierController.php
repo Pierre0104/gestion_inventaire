@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 
 class SupplierController extends Controller
 {
+
+    public function index()
+    {
+        // Get orders with pagination
+        $suppliers = Supplier::paginate(5); // Change 10 to however many items you want per page
+    
+        return response()->json($suppliers);
+    }
     // Create a new Supplier
     public function store(Request $request)
     {

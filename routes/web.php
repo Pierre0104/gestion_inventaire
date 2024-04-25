@@ -25,3 +25,4 @@ Route::get('/inventory', [ProductController::class, 'index']);
 // Si vous utilisez une méthode de contrôleur nommée 'index' pour afficher la page des commandes
 Route::get('/inventory/order', [OrderController::class, 'index']);
 
+Route::view('/inventory/suppliers', 'suppliers');
