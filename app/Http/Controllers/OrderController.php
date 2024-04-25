@@ -7,12 +7,10 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-   public function index()
+public function index()
 {
-    // Get orders with pagination
-    $orders = Order::paginate(5); // Change 10 to however many items you want per page
-
-    return response()->json($orders);
+    $orders = Order::with(['customer', 'products'])->paginate(10);
+    return view('order', compact('orders')); // Assurez-vous que 'order' correspond au nom de votre vue Blade
 }
 
     public function store(Request $request)

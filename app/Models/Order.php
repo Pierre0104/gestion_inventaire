@@ -11,11 +11,13 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id', 
-        'order_date', 
         'total_price',
         // Pas besoin d'inclure 'created_at' et 'updated_at' ici car Laravel les gère automatiquement
     ];
 
+protected $casts = [
+    'order_date' => 'datetime'
+];
     // Relation avec Customer (si un modèle Customer existe)
     public function customer()
     {
@@ -30,3 +32,4 @@ class Order extends Model
 
     // Vous pouvez également ajouter d'autres méthodes et logiques nécessaires à votre modèle ici.
 }
+

@@ -11,100 +11,28 @@
     <div class="container mx-auto py-8">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Gestion des Commandes</h1>
         
-       <div class="flex justify-between mb-4">
-            <button onclick="window.location.href='/inventory'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                Retour à l'inventaire
-            </button>
-            <button onclick="fetchOrders()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Rafraîchir les commandes
-            </button>
+        <!-- Liste des commandes -->
+        <div id="orders-list">
+            @foreach ($orders as $order)
+                <div class="flex justify-between items-center p-3 mb-4 bg-white rounded shadow">
+                    <div>
+                        <p>Commande ID: {{ $order->id }}</p>
+                        <p>Client ID: {{ $order->customer_id }}</p>
+                        <p>Date de commande: {{ $order->order_date->format('d/m/Y') }}</p>
+                        <p>Total: {{ number_format($order->total_price, 2, ',', ' ') }} €</p>
+                    </div>
+                    <div>
+                        <button onclick="showEditOrderModal({{ $order->id }})" class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Modifier</button>
+                        <button onclick="deleteOrder({{ $order->id }})" class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Supprimer</button>
+                    </div>
+                </div>
+            @endforeach
         </div>
         
-        <div id="orders-list" class="mt-8"></div>
-    <!-- Ajoutez ce formulaire dans votre <div class="container mx-auto py-8"> -->
-<!-- Bouton pour ouvrir le modal de création d'une commande -->
-<button onclick="showCreateOrderModal()" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-    Créer une Commande
-</button>
-
-<!-- Modal pour créer une nouvelle commande -->
-<div id="create-order-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
-    <div class="flex justify-center items-center h-full">
-        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline">
-                            Nouvelle Commande
-                        </h3>
-                        <div>
-                            <form id="create-order-form">
-                                <input type="number" id="new-customer-id" placeholder="ID Client" required />
-                                <input type="date" id="new-order-date" placeholder="Date de commande" required />
-                                <input type="number" id="new-total-price" placeholder="Prix Total" required />
-                                <!-- Ajoutez d'autres champs si nécessaire -->
-                                <div class="mt-5 sm:mt-6">
-                                    <button type="button" onclick="createOrder()" class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                        Créer
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button" onclick="hideCreateOrderModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
-                    Annuler
-                </button>
-            </div>
+        <!-- Pagination -->
+        <div class="mt-4">
+            {{ $orders->links() }}
         </div>
-    </div>
-</div>
-<!-- Modal pour modifier une commande existante -->
-<div id="edit-order-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
-    <div class="flex justify-center items-center h-full">
-        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full" role="dialog" aria-modal="true" aria-labelledby="modal-headline-edit">
-            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div class="sm:flex sm:items-start">
-                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-headline-edit">
-                            Modifier Commande
-                        </h3>
-                        <div class="mt-2">
-                            <form id="edit-order-form">
-                                <input type="hidden" id="edit-order-id">
-                                <input type="number" id="edit-customer-id" placeholder="ID Client" required />
-                                <input type="date" id="edit-order-date" placeholder="Date de commande" required />
-                                <input type="number" id="edit-total-price" placeholder="Prix Total" required />
-                                <!-- Ajoutez d'autres champs si nécessaire -->
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button type="button" onclick="submitEditOrder()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-                    Enregistrer
-                </button>
-                <button type="button" onclick="hideEditOrderModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
-                    Annuler
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="flex justify-center mt-4 space-x-2">
-    <button id="prevPageBtn" onclick="goToPreviousPage()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-        Précédent
-    </button>
-    <button id="nextPageBtn" onclick="goToNextPage()" class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed">
-        Suivant
-    </button>
-</div>
-
-
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

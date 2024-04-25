@@ -8,7 +8,7 @@
 </head>
 <body class="bg-gray-100 h-screen antialiased leading-none">
     <div class="container mx-auto py-8">
-        <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Gestion d'Inventaire</h1>
+        <h1 class="text-4xl font-bold text-center text-gray-800 mb-10">Gestion des Clients</h1>
         
         <section class="mb-8">
             <h2 class="text-2xl text-gray-700 mb-4">Ajouter un Nouveau Client</h2>
@@ -121,7 +121,7 @@
             data.data.forEach(customers => {
                 customerList.innerHTML += `
                     <div class="flex justify-between items-center p-3 border-b border-gray-200">
-                        <span class="text-gray-800">${customers.name} - ${customers.email}€</span>
+                        <span class="text-gray-800">${customers.name} - ${customers.email}</span>
                         <div>
                             <button onclick="editCustomers(${customers.id})" class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Modifier</button>
                             <button onclick="deleteCustomers(${customers.id})" class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Supprimer</button>
