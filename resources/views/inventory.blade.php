@@ -105,6 +105,9 @@
     <a href="{{ url('inventory/order') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Gérer les Commandes
     </a>
+    <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les Clients
+    </a>
 </div>
 
 
@@ -208,7 +211,7 @@ function updateProduct(event) {
     })
     .then(updatedProduct => {
         fetchProducts(); // Recharger la liste des produits
-        document.getElementById('update-product').classList.add('hidden');
+        document.getElementById('edit-product-modal').classList.add('hidden');
         document.getElementById('update-product').reset();
 
         hideEditModal(); // Cacher le modal après la mise à jour
@@ -246,7 +249,29 @@ function createProduct(event) {
     })
     .catch(error => console.error('Erreur:', error));
 }
-        document.getElementById('update-product').addEventListener('submit', updateProduct);
+        document.getElementById('update-product').addEventListener('submit', updateProduct); 
+
+    function deleteProduct(productId) {
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+        fetch(`/api/products/${productId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': token
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Erreur lors de la suppression du produit');
+            return response.json();
+        })
+        .then(() => {
+            fetchProducts(); // Mettre à jour la liste des produits après la suppression
+            alert('Produit supprimé avec succès.');
+        })
+        .catch(error => console.error('Erreur:', error));
+    }
+}
+
     </script>
 
 </body>

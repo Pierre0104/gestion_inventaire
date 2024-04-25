@@ -9,7 +9,10 @@ class CustomerController extends Controller
 {
     public function index()
     {
-        return response()->json(Customer::all());
+        // Get orders with pagination
+        $customers = Customer::paginate(5); // Change 10 to however many items you want per page
+    
+        return response()->json($customers);
     }
 
     public function store(Request $request)

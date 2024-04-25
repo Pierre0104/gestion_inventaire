@@ -15,3 +15,5 @@ Route::get('/inventory', function () {
 Route::view('/inventory/products', 'products');
 
 Route::view('/inventory/order', 'order');
+
+Route::view('/inventory/customers', 'customers');
