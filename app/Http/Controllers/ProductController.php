@@ -12,9 +12,9 @@ class ProductController extends Controller
    // In your ProductController
 public function index()
 {
-    // Fetch products with their supplier and orders information
-    $products = Product::with(['supplier', 'orders'])->paginate(10);
-    return view('inventory', ['products' => $products]);
+     // Fetch products with their supplier information
+     $products = Product::with('supplier')->paginate(10); // Assuming pagination
+     return response()->json($products);
 }
 
 

@@ -93,14 +93,18 @@
 </div>
 
 <!-- inventory.blade.php -->
-<div class="text-right mb-4">
-    <a href="{{ url('inventory/order') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+<div class="flex justify-end space-x-2 mb-4">
+    <a href="{{ url('inventory/orders') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Gérer les Commandes
     </a>
     <a href="{{ url('inventory/') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Gérer les Produits
     </a>
+    <a href="{{ url('inventory/suppliers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les fournisseurs
+    </a>
 </div>
+
 
 
 
@@ -121,7 +125,7 @@
             data.data.forEach(customers => {
                 customerList.innerHTML += `
                     <div class="flex justify-between items-center p-3 border-b border-gray-200">
-                        <span class="text-gray-800">${customers.name} - ${customers.email}€</span>
+                        <span class="text-gray-800">${customers.name} - ${customers.email}</span>
                         <div>
                             <button onclick="editCustomers(${customers.id})" class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Modifier</button>
                             <button onclick="deleteCustomers(${customers.id})" class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Supprimer</button>
@@ -210,6 +214,7 @@ function updateCustomers(event) {
 }
 
 document.getElementById('update-customers').addEventListener('submit', updateCustomers);
+document.getElementById('create-customer').addEventListener('submit', createCustomer);
 
 function createCustomer(event) {
     event.preventDefault();

@@ -55,24 +55,12 @@
             </div>
         </section>
         
-   <section class="mb-8">
-    <h2 class="text-lg font-semibold text-gray-600 mb-3">Produits</h2>
-    <div id="product-list" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        @foreach ($products as $product)
-            <div class="flex justify-between items-center p-3 border-b border-gray-200">
-                <span class="text-gray-800">{{ $product->name }} - {{ number_format($product->price, 2) }}€</span>
-                <div>
-                    <button onclick="editProduct({{ $product->id }})" class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Modifier</button>
-                    <button onclick="deleteProduct({{ $product->id }})" class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Supprimer</button>
-                </div>
+       <section id="products" class="mb-8">
+            <h2 class="text-lg font-semibold text-gray-600 mb-3">Produits</h2>
+             <div id="product-list" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <!-- Les produits seront ajoutés ici par JavaScript -->
             </div>
-        @endforeach
-    </div>
-    <!-- Pagination -->
-    <div class="mt-4 flex justify-center">
-        {{ $products->links() }}
-    </div>
-</section>
+         </section>
 
         </section>
         
@@ -113,17 +101,17 @@
 </div>
 
 <!-- inventory.blade.php -->
- <div class="text-right mb-4 space-x-2">
-        <a href="{{ url('inventory/order') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Gérer les Commandes
-        </a>
-        <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Gérer les Clients
-        </a>
-        <a href="{{ url('inventory/suppliers') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Gérer les Fournisseurs
-        </a>
-    </div>
+<div class="flex justify-end space-x-2 mb-4">
+    <a href="{{ url('inventory/orders') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les Commandes
+    </a>
+    <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les Clients
+    </a>
+    <a href="{{ url('inventory/suppliers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les fournisseurs
+    </a>
+</div>
 
 
 
@@ -235,6 +223,7 @@ function updateProduct(event) {
 }
 
 document.getElementById('update-product').addEventListener('submit', updateProduct);
+document.getElementById('create-product').addEventListener('submit', createProduct);
 
 function createProduct(event) {
     event.preventDefault();

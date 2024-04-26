@@ -13,35 +13,54 @@
         
         <!-- Liste des commandes -->
         <div id="orders-list">
-            @foreach ($orders as $order)
-                <div class="flex justify-between items-center p-3 mb-4 bg-white rounded shadow">
-                    <div>
-                        <p>Commande ID: {{ $order->id }}</p>
-                        <p>Client ID: {{ $order->customer_id }}</p>
-                        <p>Date de commande: {{ $order->order_date->format('d/m/Y') }}</p>
-                        <p>Total: {{ number_format($order->total_price, 2, ',', ' ') }} €</p>
-                    </div>
-                    <div>
-                        <button onclick="showEditOrderModal({{ $order->id }})" class="text-sm bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Modifier</button>
-                        <button onclick="deleteOrder({{ $order->id }})" class="text-sm bg-red-500 hover:bg-red-700 text-white py-1 px-3 rounded focus:outline-none focus:shadow-outline">Supprimer</button>
-                    </div>
-                </div>
-            @endforeach
+            
         </div>
         
         <!-- Pagination -->
-        <div class="mt-4">
-            {{ $orders->links() }}
+        <div id="pagination-controls" class="mt-4">
+            
         </div>
 
+        <div id="edit-order-modal" class="fixed inset-0 bg-gray-500 bg-opacity-75 hidden">
+    <div class="flex justify-center items-center h-full">
+        <div class="bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+            <div class="p-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Modifier un order
+                        </h3>
+                        <form id="update-order" class="mt-2">
+                            <input type="hidden" id="edit-order-id">
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="edit-customer-id" type="number" step="1" placeholder="id client" required>
+                            <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4" id="edit-order-date" placeholder="Description du produit"></textarea>
+                            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-4" id="edit-total-price" type="number" step="0.01" placeholder="Prix" required>
+                            <div class="mt-5 sm:mt-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Valider
+                                </button>
+                                <button type="button" onclick="hideEditModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm">
+                                    Quitter
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- inventory.blade.php -->
 <!-- inventory.blade.php -->
-<div class="text-center mb-4 space-x-2">
-    <a href="{{ url('inventory/suppliers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-        Gérer les Fournisseurs
+<div class="flex justify-end space-x-2 mb-4">
+    <a href="{{ url('inventory/customers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les Clients
     </a>
     <a href="{{ url('inventory/') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Gérer les Produits
+    </a>
+    <a href="{{ url('inventory/suppliers') }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Gérer les fournisseurs
     </a>
 </div>
 
@@ -53,12 +72,15 @@
         });
 
 
- function updatePaginationControls(currentPage, lastPage) {
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
-
-    prevPageBtn.disabled = currentPage <= 1;
-    nextPageBtn.disabled = currentPage >= lastPage;
+        function updatePaginationControls(data) {
+    const paginationControls = document.getElementById('pagination-controls');
+    paginationControls.innerHTML = '';
+    if (data.prev_page_url) {
+        paginationControls.innerHTML += `<button onclick="fetchOrders(${data.current_page - 1})">Prev</button>`;
+    }
+    if (data.next_page_url) {
+        paginationControls.innerHTML += `<button onclick="fetchOrders(${data.current_page + 1})">Next</button>`;
+    }
 }
 
 function fetchOrders(page = 1) {
@@ -83,7 +105,7 @@ function fetchOrders(page = 1) {
         currentPage = response.current_page;
         const lastPage = response.last_page;
 
-        updatePaginationControls(currentPage, lastPage);
+        updatePaginationControls(response);
     })
     .catch(error => console.error('Erreur:', error));
 }
@@ -158,30 +180,28 @@ function createOrder() {
 }
 
 
-function submitEditOrder() {
-    const orderId = parseInt(document.getElementById('edit-order-id').value, 10);
-    const customerId = parseInt(document.getElementById('edit-customer-id').value, 10);
-    const orderDate = document.getElementById('edit-order-date').value;
-    const totalPrice = parseFloat(document.getElementById('edit-total-price').value);
+function submitEditOrder(event) {
+    event.preventDefault();
+    const orderId = document.getElementById('edit-order-id').value;
+    const customer_id = parseInt(document.getElementById('edit-customer-id').value, 10);
+    const order_date = document.getElementById('edit-order-date').value;
+    const total_price = parseFloat(document.getElementById('edit-total-price').value);
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+    
+    console.log(orderId)
     fetch(`/api/orders/${orderId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRF-TOKEN': token
         },
-        body: JSON.stringify({
-            customer_id: customerId,
-            order_date: orderDate,
-            total_price: totalPrice
-        })
+        body: JSON.stringify({ customer_id, order_date, total_price })
     })
     .then(response => response.json())
     .then(updatedOrder => {
         alert('La commande a été mise à jour.');
         fetchOrders(); // Recharger les commandes
-        hideEditOrderModal(); // Fermer le modal
+        hideEditModal(); // Fermer le modal
     })
     .catch(error => console.error('Erreur:', error));
 }
@@ -202,9 +222,11 @@ function showEditOrderModal(orderId) {
 
 
 
-function hideEditOrderModal() {
+function hideEditModal() {
     document.getElementById('edit-order-modal').classList.add('hidden');
 }
+
+document.getElementById('update-order').addEventListener('submit', submitEditOrder);
     </script>
 </body>
 </html>

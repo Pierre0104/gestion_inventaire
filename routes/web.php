@@ -16,13 +16,13 @@ Route::get('/inventory', function () {
 
 Route::view('/inventory/products', 'products');
 
-Route::view('/inventory/order', 'order');
+Route::view('/inventory/orders', 'order');
 
 Route::view('/inventory/customers', 'customers');
 
-Route::get('/inventory', [ProductController::class, 'index']);
+Route::view('/inventory', 'inventory');
 
 // Si vous utilisez une méthode de contrôleur nommée 'index' pour afficher la page des commandes
-Route::get('/inventory/order', [OrderController::class, 'index']);
+// Route::get('/inventory/orders', [OrderController::class, 'index']);
 
 Route::view('/inventory/suppliers', 'suppliers');
